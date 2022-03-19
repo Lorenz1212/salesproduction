@@ -16,5 +16,6 @@
 <script type="text/javascript" src="<?= base_url('assets/js/pages/features/miscellaneous/toastr.js')?>"></script>
 <script type="text/javascript" src="<?= base_url('assets/js/pages/features/miscellaneous/sweetalert2.js')?>"></script>
 <script type="text/javascript" src="<?= base_url('assets/js/pages/crud/forms/widgets/bootstrap-datepicker.js')?>"></script>
+<script type="text/javascript" src="<?= base_url('assets/js/pages/AdminSpreadSheet.js') ?>"></script>
 	</body>
 </html>

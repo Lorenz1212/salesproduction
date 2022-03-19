@@ -19,7 +19,7 @@
 			<div class="d-flex align-items-center">
 				<button class="btn btn-light-dark font-weight-bolder btn-sm mr-2" data-toggle="modal" data-target="#production"><i class="flaticon2-chart mr-2"></i>Generate Production</button>
 				<button class="btn btn-light-warning font-weight-bolder btn-sm mr-2" data-toggle="modal" data-target="#target"><i class="flaticon2-graphic-1 mr-2"></i>Generate Target</button>
-				<button class="btn btn-light-primary font-weight-bolder btn-sm mr-2" data-toggle="modal" data-target="#date"><i class="flaticon2-calendar-2 mr-2"></i>Generate Date</button>
+				<button class="btn btn-light-primary font-weight-bolder btn-sm mr-2" data-toggle="modal" data-target="#list_date"><i class="flaticon2-calendar-2 mr-2"></i>Generate Date</button>
 			</div>
 		</div>
 	</div>
@@ -73,11 +73,7 @@
 			                <div class="dropdown-menu dropdown-menu-sm">
 			                    <a class="dropdown-item" href="javascript:;"><i class="flaticon-upload text-success mr-2"></i> Import</a>
 			                    <a class="dropdown-item" href="javascript:;"><i class="flaticon2-download text-success mr-2"></i>  Export</a>
-			                    <a class="dropdown-item" href="javascript:;"><i class="flaticon2-psd text-success mr-2"></i> Template</a>
-			                    <div class="dropdown-divider"></div>
-			                    <a class="dropdown-item"><i class="flaticon2-chart text-danger mr-2"></i>Edit Production</a>
-			                    <a class="dropdown-item"><i class="flaticon2-graphic-1 text-danger mr-2"></i>Edit Target Amount</a>
-			                    <a class="dropdown-item"><i class="flaticon2-calendar-2 text-danger mr-2"></i>Edit Target Date</a>
+			                    <a class="dropdown-item btn-download-template" href="javascript:;"><i class="flaticon2-psd text-success mr-2"></i> Template</a>
 			                </div>
 			            </div>
 			        </div>
@@ -86,7 +82,7 @@
 			        <div class="tab-content">
 			            <div class="tab-pane fade show active" id="validation" role="tabpanel" aria-labelledby="validation">
 			                 <div class="scroll scroll-pull" data-scroll="true" data-height="300">
-				                validation
+				               <div class="kt_tab_table_production"></div>
 			               	</div>
 			            </div>
 			            <div class="tab-pane fade" id="unit" role="tabpanel" aria-labelledby="unit">
@@ -140,7 +136,7 @@
 					 <div class="form-group row">
 					 	<div class="col-lg-12 col-xxl-12 col-md-12">
 					 		<label>Target Amount <span class="text-danger">*</span></label>
-						    <input type="text" class="form-control" name="amount"  placeholder="Enter name......" autocomplete="off"/>
+						    <input type="text" class="form-control input-currency" name="amount"  placeholder="Enter name......" autocomplete="off"/>
 					 	</div>
 					 </div>
     			 </form>
@@ -152,7 +148,36 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="date" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+<div class="modal fade" id="list_date" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">List Of Date</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+ 				<table class="table" id="kt_datatable_validation_date">
+ 					<thead>
+ 						<tr>
+ 							<th>No</th>
+ 							<th>Date From</th>
+ 							<th>Date To</th>
+ 							<th>Action</th>
+ 						</tr>
+ 					</thead>
+ 					<tbody></tbody>
+ 				</table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary font-weight-bold btn-date-create" title="create_validation_date" data-toggle="modal" data-target="#date">Generate New</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade shadow-lg p-3 mb-5" id="date" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -162,7 +187,7 @@
                 </button>
             </div>
             <div class="modal-body">
-            	<form class="form" id="create_date">
+            	<form class="form form-action" id="create_date" data-action="">
 					 <div class="form-group row">
 					 	<div class="col-lg-12 col-xxl-12 col-md-12">
 					 		<label>Date From <span class="text-danger">*</span></label>
@@ -185,10 +210,11 @@
     </div>
 </div>
 
+
 <div class="modal fade" id="production" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="staticBackdrop" aria-hidden="true">
-    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-dialog modal-xl ui-draggable" role="document">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header ui-draggable-handle">
                 <h5 class="modal-title" id="exampleModalLabel">Generate Production</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <i aria-hidden="true" class="ki ki-close"></i>
@@ -202,7 +228,7 @@
             				 	<label>Date From - To <span class="text-danger">*</span></label>
             				 	<select class="form-control" name="generate_date">
 						    	<?php 
-						    		$query = $this->db->select('*')->from('tbl_generate_date')->get();
+						    		$query = $this->db->select('*')->from('tbl_generate_date')->where('type',1)->get();
 						    		foreach($query->result() as $row){
 						    			echo '<option value="'.$row->id.'">'.date('F d, Y',strtotime($row->date_to)).' - '.date('F d, Y',strtotime($row->date_from)).'</option>';
 						    		}
@@ -277,6 +303,181 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="import" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title import_export">Import Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+            	<form class="form import_validation_data" data-action="" id="import_validation">
+            		<div class="row">
+            		<div class="col-lg-12 col-xxl-12 col-md-12">
+						 <div class="form-group">
+						 		<label>Date From - To<span class="text-danger">*</span></label>
+								 <select class="form-control" name="date_target">
+							    	<?php 
+							    		$query = $this->db->select('*')->from('tbl_generate_date')->where('type',1)->get();
+							    		foreach($query->result() as $row){
+							    			echo '<option value="'.$row->id.'">'.date('F d, Y',strtotime($row->date_to)).' - '.date('F d, Y',strtotime($row->date_from)).'</option>';
+							    		}
+						    		?>
+			               		</select>
+						 	</div>
+						 </div>
+					 	<div class="col-lg-6 col-xxl-6 col-md-6 d-none">
+						 <div class="form-group">
+					 		<label>Month<span class="text-danger">*</span></label>
+        				 	<select class="form-control" name="month_target">
+        				 		<option value="1">January</option>
+        				 		<option value="2">February</option>
+        				 		<option value="3">March</option>
+        				 		<option value="4">April</option>
+        				 		<option value="5">May</option>
+        				 		<option value="6">June</option>
+        				 		<option value="7">July</option>
+        				 		<option value="8">August</option>
+        				 		<option value="9">September</option>
+        				 		<option value="10">October</option>
+        				 		<option value="11">November</option>
+        				 		<option value="12">December</option>
+		               		</select>
+					 	</div>
+					 </div>
+						 <div class="col-lg-6 col-xxl-6 col-md-6 d-none">
+								<div class="form-group">
+							 		<label>Year<span class="text-danger">*</span></label>
+							 		<input type="text" class="form-control yearpicker" name="year_target" placeholder="Click year....." readonly>
+							 	</div>
+						 </div>
+					</div>
+					<div class="row d-none">
+						 <div class="col-lg-12 col-xxl-12 col-md-12">
+						 	<div class="form-group">
+						 		<input type="file" class="form-control file" name="file" id="filechose_button" style="display:none"/>
+						 		<button type="button" class="btn btn-light-dark btn-shadow" onclick="filechose_button.click()">Choose File <i class="flaticon-upload"></i></button>
+						 	</div>
+						 </div>
+					</div>
+    			 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary font-weight-bold btn-import-export">Generate</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="import" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title import_export">Import Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+            	<form class="form import_validation_data">
+            		<div class="row">
+            		<div class="col-lg-12 col-xxl-12 col-md-12">
+						 <div class="form-group">
+						 		<label>Date From - To<span class="text-danger">*</span></label>
+								 <select class="form-control" name="date_target">
+							    	<?php 
+							    		$query = $this->db->select('*')->from('tbl_generate_date')->where('type',1)->get();
+							    		foreach($query->result() as $row){
+							    			echo '<option value="'.$row->id.'">'.date('F d, Y',strtotime($row->date_to)).' - '.date('F d, Y',strtotime($row->date_from)).'</option>';
+							    		}
+						    		?>
+			               		</select>
+						 	</div>
+						 </div>
+					 	<div class="col-lg-6 col-xxl-6 col-md-6 d-none">
+						 <div class="form-group">
+					 		<label>Month<span class="text-danger">*</span></label>
+        				 	<select class="form-control" name="month_target">
+        				 		<option value="1">January</option>
+        				 		<option value="2">February</option>
+        				 		<option value="3">March</option>
+        				 		<option value="4">April</option>
+        				 		<option value="5">May</option>
+        				 		<option value="6">June</option>
+        				 		<option value="7">July</option>
+        				 		<option value="8">August</option>
+        				 		<option value="9">September</option>
+        				 		<option value="10">October</option>
+        				 		<option value="11">November</option>
+        				 		<option value="12">December</option>
+		               		</select>
+					 	</div>
+					 </div>
+						 <div class="col-lg-6 col-xxl-6 col-md-6 d-none">
+								<div class="form-group">
+							 		<label>Year<span class="text-danger">*</span></label>
+							 		<input type="text" class="form-control yearpicker" name="year_target" placeholder="Click year....." readonly>
+							 	</div>
+						 </div>
+					</div>
+					<div class="row d-none">
+						 <div class="col-lg-12 col-xxl-12 col-md-12">
+						 		<button type="button" class="btn btn-light-dark btn-shadow btn-click-file">Choose File <i class="flaticon-upload"></i></button>
+						 		<input type="file" class="form-control file" name="file" style="display:none">
+						 </div>
+					</div>
+    			 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary font-weight-bold btn-import-export">Generate</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="fetch_import_data" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdrop" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title import_export">Date From - To : <span class="generate_date_target"><span></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <i aria-hidden="true" class="ki ki-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+            	<form class="form" id="Create_Import_Validation">
+            		<div class="row">
+            			<div class="col-lg-12 col-xxl-12 col-md-12">
+            				<div data-scroll="true" data-height="300">
+							 	<table class="table table-bordered" id="KT_table_import_validation">
+							 		<thead>
+							 			<tr class="table-active">
+							 				<th>TEAM</th>
+							 				<th>ADVISOR CODE</th>
+							 				<th>NAME</th>
+							 				<th>SUBMITTED</th>
+							 				<th>SETTLED</th>
+							 				<th>AC</th>
+							 				<th>NSC</th>
+							 			</tr>
+							 		</thead>
+							 		<tbody></tbody>
+							 	</table>
+						   </div>
+						</div>
+					</div>
+    			 </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary font-weight-bold btn-import-create">Submit</button>
             </div>
         </div>
     </div>

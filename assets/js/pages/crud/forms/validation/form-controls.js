@@ -213,7 +213,7 @@ var KTFormControls = function () {
 				break;
 			}
 			case "validation":{
-				 var form_target = KTUtil.getById('create_target');
+				var form_target = KTUtil.getById('create_target');
 		       	var validation_target = FormValidation.formValidation(
 		            form_target,{
 		                fields: {
@@ -278,9 +278,10 @@ var KTFormControls = function () {
 		            e.preventDefault();
 		            validation_date.validate().then(function(status) {
 		                if (status == 'Valid') {
-		                     let formData = new FormData(form_date);
+		                    let formData = new FormData(form_date);
 	                        formData.append("action", "validation");
-	                        formData.append("type", 'create_date');
+	                        formData.append("type", $('.form-action').attr('data-action'));
+	                        formData.append('id',$('input[name="from"]').attr('data-id'));
 	                        _ajaxForm(formData,'create_validation_date',false);      
 		                }	
 	                });       
@@ -293,7 +294,7 @@ var KTFormControls = function () {
 	var _initResponse = function(response,val,val2){
 		switch(val){
 			case "create_advisor":{
-				_showToast('success',res);
+				_showToast('success',response);
 				document.getElementById('create_advisor').reset();
 				 $('#kt_image_5 > span:nth-child(3)').trigger('click');
 				KTDatatablesDataSourceAjaxServer.init('kt_datatable_advisor');
@@ -310,31 +311,36 @@ var KTFormControls = function () {
 				break;
 			}
 			case "create_unit":{
-				_showToast('success',res);
+				_showToast('success',response);
 				document.getElementById('create_unit').reset();
 				KTDatatablesDataSourceAjaxServer.init('kt_datatable_unit');
 				break;
 			}
 			case "update_unit":{
-				_showToast('success',res);
+				_showToast('success',response);
 				KTDatatablesDataSourceAjaxServer.init('kt_datatable_unit');
 				break;
 			}
 			case "create_validation_date":{
-				if(res == 'Created Successfully'){
-					_showToast('success',res);
+				if(response == 'Created Successfully'){
+					_showToast('success',response);
+					document.getElementById('create_date').reset();
+					KTDatatablesDataSourceAjaxServer.init('kt_datatable_validation_date');
+				}else if(response == 'Update Successfully'){
+					_showToast('success',response);
+					KTDatatablesDataSourceAjaxServer.init('kt_datatable_validation_date');
 				}else{
-					_showToast('info',res);
+					_showToast('info',response);
+					document.getElementById('create_date').reset();
 				}
-				document.getElementById('create_date').reset();
 				break;
 			}
 			case "create_validation_target":{
 				if(res == 'Created Successfully'){
-					_showToast('success',res);
+					_showToast('success',response);
 					document.getElementById('create_target').reset();
 				}else{
-					_showToast('success',res);
+					_showToast('success',response);
 				}
 				break;
 			}

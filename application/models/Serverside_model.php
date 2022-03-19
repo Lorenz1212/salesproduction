@@ -6,8 +6,8 @@ class Serverside_model extends CI_Model {
      * Fetch members data from the database
      * @param $_POST filter data based on the posted parameters
      */
-    public function getRows($postData,$table,$column_order,$column_search,$order){
-        $this->_get_datatables_query($postData,$table,$column_order,$column_search,$order);
+    public function getRows($postData,$table,$column_order,$column_search,$order,$column_where){
+        $this->_get_datatables_query($postData,$table,$column_order,$column_search,$order,$column_where);
         if($postData['length'] != -1){
             $this->db->limit($postData['length'], $postData['start']);
         }
@@ -17,16 +17,19 @@ class Serverside_model extends CI_Model {
     /*
      * Count all records
      */
-    public function countAll($table){
+    public function countAll($table,$column_where){
         $this->db->from($table);
+        if($column_where !=false){
+            $this->db->where($column_where);
+        }
         return $this->db->count_all_results();
     }
     /*
      * Count records based on the filter params
      * @param $_POST filter data based on the posted parameters
      */
-    public function countFiltered($postData,$table,$column_order,$column_search,$order){
-        $this->_get_datatables_query($postData,$table,$column_order,$column_search,$order);
+    public function countFiltered($postData,$table,$column_order,$column_search,$order,$column_where){
+        $this->_get_datatables_query($postData,$table,$column_order,$column_search,$order,$column_where);
         $query = $this->db->get();
         return $query->num_rows();
     }
@@ -35,8 +38,11 @@ class Serverside_model extends CI_Model {
      * @param $_POST filter data based on the posted parameters
      */
 
-    private function _get_datatables_query($postData,$table,$column_order,$column_search,$order){
+    private function _get_datatables_query($postData,$table,$column_order,$column_search,$order,$column_where){
         $this->db->from($table);
+        if($column_where !=false){
+            $this->db->where($column_where);
+        }
         $i = 0;
         // loop searchable columns 
         foreach($column_search as $item){

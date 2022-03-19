@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class AdminController extends CI_Controller {
    function __construct(){
        parent::__construct();      
-       $this->load->model('Admin_Model');    
+       $this->load->model('Admin_model','Admin_Model');    
     } 
       public function Controller(){
          $action = $this->input->post('data1');
@@ -139,4 +139,5 @@ class AdminController extends CI_Controller {
          }
       }
    }
+
 }

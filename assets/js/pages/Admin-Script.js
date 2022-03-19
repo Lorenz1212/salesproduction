@@ -33,7 +33,7 @@ var APPHANDLER = function(){
         return params;
     };
     var _check_url =  async function (url){;   
-      $('.menu-item').removeClass('menu-item-active menu-item-open');
+          $('.menu-item').removeClass('menu-item-active menu-item-open');
           if(url.split('/')[3] == 'adminview'){
             _loadpage(url.split('/')[4]);
             $('.'+url.split('/')[4]).addClass('menu-item-active menu-item-open'); 
@@ -56,6 +56,40 @@ var APPHANDLER = function(){
     var _showToast = function(type,message){
         const Toast = Swal.mixin({toast: true,position: 'top-end',showConfirmButton: false,timer: 3000,timerProgressBar: true,onOpen: (toast) => {toast.addEventListener('mouseenter', Swal.stopTimer),toast.addEventListener('mouseleave', Swal.resumeTimer)}});Toast.fire({icon: type,title: message});
     }
+  var _initCurrency_format = function(action){
+    $( document ).ready(function() {
+      $(''+action+'').mask('000,000,000,000,000.00', {reverse: true});
+    });
+  } 
+  var _number_seperator = function(action){
+     $( document ).ready(function() {
+       $(''+action+'').keyup(function(event) {
+        alert('ok')
+          if (event.which >= 37 && event.which <= 40) return;
+          // $(this).text(function(index, value) {
+          //   return value
+          //     // Keep only digits, decimal points, and dashes at the start of the string:
+          //     .replace(/[^\d.-]|(?!^)-/g, "")
+          //     // Remove duplicated decimal points, if they exist:
+          //     .replace(/^([^.]*\.)(.*$)/, (_, g1, g2) => g1 + g2.replace(/\./g, ''))
+          //     // Keep only two digits past the decimal point:
+          //     .replace(/\.(\d{2})\d+/, '.$1')
+          //     // Add thousands separators:
+          //     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          // });
+        });
+    });
+  }
+  var _initNumberOnly = function(action){
+      $(document).on('input', action, function(evt){
+        var self = $(this);
+        self.val(self.val().replace(/[^0-9\.]/g,''));
+        if ((evt.which < 48 || evt.which > 57)) 
+        {
+          evt.preventDefault();
+        }
+      });
+   }
     var _showSwal  = function(type,message,title) {
       if(!title){
         swal.fire({
@@ -281,8 +315,11 @@ var APPHANDLER = function(){
           break;
          }
          case"validation":{
+            KTDatatablesDataSourceAjaxServer.init('kt_datatable_validation_date');
             KTBootstrapDatepicker.init();
             KTFormControls.init('validation');
+            KTSpreadSheetControls.init('validation');
+            _initCurrency_format('.input-currency');
             $('.btn-search').on('click',function(e){
               e.preventDefault();
                 let team = $('select[name=team_search]').val();
@@ -295,10 +332,54 @@ var APPHANDLER = function(){
                    _ajaxrequest(_constructBlockUi('blockPage', false, "Advisor..."), _constructForm(['validation', 'fetch_advisor_production',false,date,month,year,team]));
                 }
             });
+            $('#list_date > div > div > div.modal-footer > button.btn.btn-primary.font-weight-bold').on('click',function(e){
+                e.preventDefault();
+                $('.form-action').attr('data-action','create_validation_date');
+                $('input[name="from"]').attr('data-id',"0");
+                document.getElementById('create_date').reset();
+            });
+            $('body').delegate('.update_validation_date','click',function(e){
+                 e.stopImmediatePropagation(); 
+                  let element=$(this);
+                  _ajaxrequest(_constructBlockUi('blockPage', false, "unit..."), _constructForm(['validation', 'fetch_validation_date',element.attr('data-id')]));
+            });
             $('select[name="generate_id"]').on('change',function(e){
                 e.preventDefault();
                  _ajaxrequest(_constructBlockUi('blockPage', false, "unit..."), _constructForm(['validation', 'fetch_validation_target',$(this).val()]));
             });
+            $('#kt_content > div.d-flex.flex-column-fluid > div > div > div.card-header.card-header-tabs-line > div:nth-child(2) > div > div > a:nth-child(1)').on('click',function(e){
+                  $('.import_validation_data > div > div:nth-child(2)').removeClass('d-none');
+                  $('.import_validation_data > div > div:nth-child(3)').removeClass('d-none');
+                  $('.import_validation_data > div:nth-child(2)').removeClass('d-none');
+                  $('#import > div > div > div.modal-header > h5').text('Import Data');
+                  $('.import_validation_data').attr('import');
+                  $('.import_validation_data').attr('id','import_validation');
+                  $('.btn-import-export').attr('id','btn-import');
+                  $('#import').modal('show');
+            });
+            $('#kt_content > div.d-flex.flex-column-fluid > div > div > div.card-header.card-header-tabs-line > div:nth-child(2) > div > div > a:nth-child(2)').on('click',function(e){
+                  $('.import_validation_data > div > div:nth-child(2)').addClass('d-none');
+                  $('.import_validation_data > div > div:nth-child(3)').addClass('d-none');
+                  $('.import_validation_data > div:nth-child(2)').addClass('d-none');
+                  $('.import_validation_data').attr('export');
+                  $('.import_validation_data').attr('id','export_validation');
+                  $('.import > div > div > div.modal-header > h5').text('Export Data');
+                  $('.btn-import-export').attr('id','btn-export');
+                  $('#import').modal('show');
+            });
+            $('.btn-click-file').one('click',function(e){
+              $('.file').trigger('click');
+              return false;
+            });
+             $('.btn-download-template').on('click',function(e){
+                e.preventDefault();
+                     window.open(base_url+"SpreadSheetController/DownloadTemplate", '_blank');
+                     _showToast('success','Template Downloaded');
+              });
+            $('select[name="search"]').on('change',function(e){
+              _ajaxrequest(_constructBlockUi('blockPage', false, "Advisor..."), _constructForm(['validation', 'fetch_validation_product',false,$(this).val()]));
+            })
+             $('select[name="search"]').trigger('change');
             break;
          }
       }
@@ -354,9 +435,10 @@ var APPHANDLER = function(){
                               <td>'+response[i].position+'</td>\
                               <td contenteditable="true" data-status="submitted">'+response[i].submitted+'</td>\
                               <td contenteditable="true" data-status="settled">'+response[i].settled+'</td>\
-                              <td contenteditable="true" data-status="ac">'+response[i].ac+'</td>\
-                              <td contenteditable="true" data-status="nsc">'+response[i].nsc+'</td>\
+                              <td id="inputnumbertext'+i+'" contenteditable="true" data-status="ac" >'+response[i].ac+'</td>\
+                              <td id="inputnumbertext'+i+'" contenteditable="true" data-status="nsc">'+response[i].nsc+'</td>\
                           </tr>');
+                   _initNumberOnly("#inputnumbertext"+i);
                 table.append(html).promise().done(function(){
                     $('table td').blur(function(e){
                         e.preventDefault();
@@ -384,12 +466,26 @@ var APPHANDLER = function(){
           }
           case "fetch_validation_target":{
             if(response){
-              $('input[name="amount"]').val(response.amount);
+              $('input[name="amount"]').val(response);
             }
             break;
           }
-        }
+          case "fetch_validation_date":{
+            if(response){
+              $('.form-action').attr('data-action','update_validation_date');
+              $('input[name="from"]').val(response.date_from);
+              $('input[name="from"]').attr('data-id',response.id);
+              $('input[name="to"]').val(response.date_to);
+              $('#date').modal('show');
+            }
+            break;
+          }
+          case "fetch_validation_product":{
+             $('.kt_tab_table_production').empty().append(response);
+            break;
+          }
 
+        }
     };
     // start making formdata
     var _constructForm = function(args){

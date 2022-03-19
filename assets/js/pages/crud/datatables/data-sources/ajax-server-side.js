@@ -126,6 +126,42 @@ var KTDatatablesDataSourceAjaxServer = function() {
 		});
 	  
 	};
+	var initValidationDate = function(table) {
+		table = $('#'+table);
+        table.DataTable().clear().destroy();
+		table.DataTable({
+			responsive: true,
+			processing: true,
+			serverSide: true,
+			pageLength : 5,
+			visible: false,
+			lengthChange: false,
+        	order: [],
+        	language: {emptyTable: "No Generate Date Available"},
+			ajax: {
+				url: base_url +'Serverside_Controller/Serverside_Validation_Date',
+				type: 'POST',
+			},
+			columnDefs: [
+				{ 
+                    targets: [0,1,2,-1],
+                    className: "text-nowrap"
+                },
+				{
+					targets: -1,
+					orderable: false,
+					render: function(data,type,row) {
+						return '\
+							<div class="d-flex flex-row">\
+								<a href="javascript:;" class="btn btn-icon btn-light btn-hover-info btn-sm m-1 update_validation_date"  data-id='+row[3]+'  title="edit_validation_date">\
+									<i class="la la-pencil"></i>\
+								</a>\
+						</div>';
+                	},
+				},
+			],
+		});
+	};
 	return {
 		//main function to initiate the module
 		init: function(table,action) {
@@ -134,6 +170,9 @@ var KTDatatablesDataSourceAjaxServer = function() {
 			}
 			if(table == 'kt_datatable_unit'){
 				initUnit(table,action);
+			}
+			if(table == 'kt_datatable_validation_date'){
+				initValidationDate(table,action);
 			}
 		},
 	};
