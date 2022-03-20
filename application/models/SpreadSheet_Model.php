@@ -1,6 +1,6 @@
 <?php 
 defined('BASEPATH') OR exit('No direct script access allowed');
-class SpreadSheet_Model extends CI_Model {
+class SpreadSheet_model extends CI_Model {
     function __construct() {
        $this->admin_id = $this->session->userdata('TREE_ADMIN_ID');
     }
