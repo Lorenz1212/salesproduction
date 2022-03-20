@@ -54,17 +54,6 @@ class SpreadSheetController extends CI_Controller {
              $sql = $this->db->select('*')->from('tbl_advisor as a')->join('tbl_team as t','a.team=t.id','LEFT')->get();
              $count = 2;
              foreach($sql->result() as $row){
-                 // if($row->position == 1){
-                 //     $position = 'BM';
-                 // }else if($row->position == 2){
-                 //     $position = 'SM';
-                 // }else if($row->position == 3){
-                 //     $position = 'UM';
-                 // }else if($row->position == 4){
-                 //     $position = 'MC';
-                 // }else if($row->position == 5){
-                 //     $position = 'A';
-                 // }
                  $sheet->setCellValue('A' .$count, $row->name);
                  $sheet->setCellValue('B' .$count, $row->advisor_code);
                  $sheet->setCellValue('C' .$count, $row->fname.' '.$row->mname.' '.$row->lname);
