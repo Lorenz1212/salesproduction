@@ -10,7 +10,7 @@ class SpreadSheetController extends CI_Controller {
        $this->xlsx = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
        $this->csv = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
        $this->spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();  
-       $this->load->model('spreadSheet_model'); 
+       $this->load->model('SpreadSheet_Model'); 
        $this->load->helper('download');  
     }
     public function AdminAction(){
